@@ -60,3 +60,9 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+#Vim swap file
+*.swp
+
+#Generated file
+*.csv
