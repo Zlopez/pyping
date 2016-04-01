@@ -11,14 +11,15 @@ import signal
 import sys
 import argparse
 import socket
-import matplotlib
+import matplotlib.pyplot as plt
 
-#Global constants
-csv_file="temp"
+#Global variables
+temp_file="/tmp/pyping.data"
 ip_address="8.8.8.8"
 debug=False
-graph=False
+graph=""
 
+#Parse arguments
 def parseArguments():
   global debug
   global graph
@@ -26,7 +27,7 @@ def parseArguments():
 
   parser = argparse.ArgumentParser(description='Timeout checker using ordinary ping.')
   parser.add_argument('-d',action='store_true',help='Show debug information.')
-  parser.add_argument('-g',action='store_true',help='Plot graph when CTRL+C is hit.')
+  parser.add_argument('-g',help='Path to file for graph plotting. If no file is specified, graph will not be plotted.')
   parser.add_argument('address',help='Address to check for timeouts.')
   args = parser.parse_args()
   if args.d:
@@ -34,18 +35,21 @@ def parseArguments():
     if debug:
       print ("DEBUG: Found argument -d. Printing debug informations.")
   if args.g:
-    graph = True
+    graph = args.g
     if debug:
-      print ("DEBUG: Found argument -g. Graph will be printed.")
+      print ("DEBUG: Found argument -g. Graph will be printed to " + graph + ".")
   if args.address:
     try:
-          socket.inet_aton(args.address)
-          ip_address = args.address
-          if debug:
-            print ("DEBUG: Address found " + ip_address + ".")
+      socket.inet_aton(args.address)
+      ip_address = args.address
+      if debug:
+        print ("DEBUG: Address found " + ip_address + ".")
     except socket.error:
       print ("Argument address is not valid.")
       exit(1)
+
+#Plot graph to specified location
+
 
 #First run ping
 def runPing():
@@ -58,7 +62,9 @@ def runPing():
   min_ping = 9999.0
   timeouts_length = 0
 
-  prepareCSVFile()
+  #Create file only when graph will be plotted
+  if graph:
+    prepareCSVFile()
   try:
     if debug:
       print ("DEBUG: Waiting for timeouts.")
@@ -94,7 +100,9 @@ def runPing():
         if not timeout:
           timeout = [now,now]
 
-      saveLatencyToFile(now + ',' + str(time_ping))
+      #Print to temp file only if graph will be plotted
+      if graph:
+        saveLatencyToFile(now + ',' + str(time_ping))
       time_ping = None
   except (SystemExit,KeyboardInterrupt):
     if debug:
@@ -104,13 +112,13 @@ def runPing():
 #Just erase content of file
 def prepareCSVFile():
   if debug:
-    print ("DEBUG: Creating temp file: " + csv_file +  ".")
-  with open(csv_file,'w') as f:
+    print ("DEBUG: Creating temp file: " + temp_file +  ".")
+  with open(temp_file,'w') as f:
     f.write('')
 
 #Append one new line to CSV file
 def saveLatencyToFile(string):
-  with open(csv_file,'a') as f:
+  with open(temp_file,'a') as f:
     f.write(string + '\n')
 
 #Print statistics to stdout
