@@ -2,9 +2,9 @@
 Extented ping command written in python. 
 
 ##Features
--graph plotting
--summary statistics with average, max, min latency
--statistics with number of timeouts and summary time without connection
+* graph plotting
+* summary statistics with average, max, min latency
+* statistics with number of timeouts and summary time without connection
 
 ##Usage
 pyping.py [-h] [-d] [-g G] address
