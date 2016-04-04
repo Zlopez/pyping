@@ -49,7 +49,42 @@ def parseArguments():
       exit(1)
 
 #Plot graph to specified location
+def plotGraph(data):
+  if debug:
+    print ("DEBUG: Graph generation started.")
 
+  print("--------------------------------------------------")
+  print("Graph is being generated...")
+  x_axis = []
+  y_axis = []
+  for touple in data:
+    x_axis.append(datetime.datetime.strptime(touple[0],'%Y-%m-%d %H:%M:%S'))
+    y_axis.append(float(touple[1]))
+  plt.plot(x_axis,y_axis)
+  plt.ylabel('latency')
+  plt.gcf().autofmt_xdate()
+  plt.savefig(graph)
+  print("Graph generated")
+
+  if debug:
+    print ("DEBUG: Graph generation finished.")
+
+
+#Read data from generated CSV file
+def readTempFile():
+  if debug:
+    print ("DEBUG: Reading values from temp file.")
+
+  data = []
+  with open(temp_file, 'r') as f:
+    lines = f.readlines()
+    for line in lines:
+      values = line.split(',')
+      data.append((values[0],values[1]))
+
+  if debug:
+    print ("DEBUG: Values read. Count: " + str(len(data)))
+  return data
 
 #First run ping
 def runPing():
@@ -108,6 +143,9 @@ def runPing():
     if debug:
       print ("DEBUG: Script interrupted.")
     printStatistics(timeout_count, timeouts_length, time_ping_sum, ping_counter, max_ping, min_ping)
+    if graph:
+      data = readTempFile()
+      plotGraph(data)
 
 #Just erase content of file
 def prepareCSVFile():
