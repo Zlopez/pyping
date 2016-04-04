@@ -1,6 +1,9 @@
 # pyping
 Extented ping command written in python. 
 
+##Dependencies
+* matplotlib http://matplotlib.org/
+
 ##Features
 * graph plotting
 * summary statistics with average, max, min latency
