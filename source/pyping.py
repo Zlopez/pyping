@@ -12,6 +12,7 @@ import sys
 import argparse
 import socket
 import matplotlib.pyplot as plt
+import os
 
 #Global variables
 temp_file="/tmp/pyping.data"
@@ -81,6 +82,9 @@ def readTempFile():
     for line in lines:
       values = line.split(',')
       data.append((values[0],values[1]))
+
+  #Delete temp file
+  os.remove(temp_file)
 
   if debug:
     print ("DEBUG: Values read. Count: " + str(len(data)))
@@ -178,6 +182,9 @@ def sigterm_handler(_signo, _stack_frame):
   if debug:
     print ("DEBUG: Script interrupted by signal.")
   printStatistics(timeout_count, timeouts_length, time_ping_sum, ping_counter, max_ping, min_ping)
+  if graph:
+    data = readTempFile()
+    plotGraph(data)
   sys.exit(0)
 
 if __name__=='__main__':
