@@ -60,11 +60,17 @@ def plotGraph(data):
   print("Graph is being generated...")
   x_axis = []
   y_axis = []
+  zero_indices = []
   for touple in data:
     x_axis.append(datetime.datetime.strptime(touple[0],'%Y-%m-%d %H:%M:%S'))
     y_axis.append(float(touple[1]))
+    if float(touple[1]) == 0.0:
+      zero_indices.append(len(y_axis)-1)
   plt.plot(x_axis,y_axis)
   plt.ylabel('latency')
+  #Highlight timeouts
+  for index in zero_indices:
+    plt.plot([x_axis[index]],[y_axis[index]],'ro')
   plt.gcf().autofmt_xdate()
   plt.savefig(graph)
   print("Graph generated")
