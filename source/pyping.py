@@ -11,6 +11,8 @@ import signal
 import sys
 import argparse
 import socket
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import os
 
